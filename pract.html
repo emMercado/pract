@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body>
+    <div>
+      <input id="personInputName" placeholder="Name" type="text" />
+      <input id="personInputLastName" placeholder="LastName" type="text" />
+      <input id="personInputAge" placeholder="Age" type="text" />
+      <button id="buttonAddPerson" onclick="addPerson()">Add Person</button>
+    </div>
+    <br />
+    <div>
+      <input
+        id="deleteTaskInput"
+        type="number"
+        placeholder="Choice task number"
+        min="1"
+      />
+      <button onclick="deleteTask()">Delete Task</button>
+      <button onclick="mapear()">MAPEAR</button>
+    </div>
+    <div>
+      <p>Lista Personas</p>
+      <ul id="list"></ul>
+    </div>
+  </body>
+
+  <script>
+    class Person {
+      constructor(id, name, lastName, age) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.age = age;
+      }
+
+      getPersonData = () => {
+        return `Name: ${this.name}, LastName: ${this.lastName}, Age: ${this.age}`;
+      };
+    }
+
+    const data = [];
+
+    const enumColors = {
+      BLACK: "black",
+      GREEN: "green",
+      BLUE: "blue",
+      RED: "red",
+    };
+
+    let maxId = 0;
+    const list = document.querySelector("#list");
+    const inputName = document.querySelector("#personInputName");
+    const inputLastName = document.querySelector("#personInputLastName");
+    const inputAge = document.querySelector("#personInputAge");
+
+    const addPerson = () => {
+      const name = inputName.value;
+      const lastName = inputLastName.value;
+      const age = inputAge.value;
+      const person = new Person(++maxId, name, lastName, age);
+
+      const text = document.createElement("p");
+      const item = document.createElement("li");
+
+      /* const newTask = {
+        id: ++maxId,
+        name: "content",
+        status: false,
+      }; */
+
+      data.push(person);
+      const dataPerson = person.getPersonData();
+
+      const editButton = document.createElement("button");
+      editButton.textContent = "EDIT";
+      editButton.setAttribute("id", `button-${person.id}`);
+      editButton.setAttribute("onclick", `handleEditPerson(${person.id})`);
+      editButton.style.color = enumColors.BLACK;
+      editButton.style.background = enumColors.GREEN;
+
+      text.appendChild(document.createTextNode(`${dataPerson}`));
+      item.appendChild(text);
+      item.appendChild(editButton);
+      item.setAttribute("id", `${person.id}`);
+      list.appendChild(item);
+
+      inputName.value = "";
+      inputLastName.value = "";
+      inputAge.value = "";
+    };
+
+    const mapear = () => {
+      console.log(data.map((e) => e));
+    };
+
+    /* const deleteTask = () => {
+        let list = document.getElementById('list');
+        let selectItem = document.getElementById("deleteTaskInput");
+
+        if (selectItem.value) {
+            let option = confirm("Posta queres eliminarme?")
+            if (option === true) {
+                const itemId = parseInt(selectItem.value)
+                const element = data.find(item => itemId === item.id)
+                let index = data.indexOf(element)
+
+                data.splice(index, 1)
+
+                let item = document.getElementById(selectItem.value);
+                list.removeChild(item);
+                alert("Task deleted successfully")
+            } else { alert("Task not deleted") }
+        } else { alert('Coloque un numerito mijo, usted puede') }
+
+    } */
+
+    const handleEditPerson = (id) => {
+      const itemId = id.toString();
+/*       const search = data.find((element) => element.id === id);
+ */      const element = data.find((item) => id === item.id);
+
+      
+      const name = inputName;
+      const lastName = inputLastName;
+      const age = inputAge;
+      
+      let item = document.getElementById(id);
+    
+        name.value=element.name
+        lastName.value=element.lastName
+        age.value=element.age
+
+      console.log(element);
+      
+      if (element.status === false) {
+        element.status = true;
+        item.style["text-decoration"] = "line-through";
+        item.style["color"] = enumColors.RED;
+      } else {
+        element.status = false;
+        item.style["text-decoration"] = "none";
+        item.style["color"] = enumColors.BLACK;
+      }
+    };
+  </script>
+</html>
