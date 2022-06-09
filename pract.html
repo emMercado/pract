@@ -1,153 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
 
-  <body>
-    <div>
-      <input id="personInputName" placeholder="Name" type="text" />
-      <input id="personInputLastName" placeholder="LastName" type="text" />
-      <input id="personInputAge" placeholder="Age" type="text" />
-      <button id="buttonAddPerson" onclick="addPerson()">Add Person</button>
-    </div>
-    <br />
-    <div>
-      <input
-        id="deleteTaskInput"
-        type="number"
-        placeholder="Choice task number"
-        min="1"
-      />
-      <button onclick="deleteTask()">Delete Task</button>
-      <button onclick="mapear()">MAPEAR</button>
-    </div>
-    <div>
-      <p>Lista Personas</p>
-      <ul id="list"></ul>
-    </div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
 
-  <script>
-    class Person {
-      constructor(id, name, lastName, age) {
-        this.id = id;
-        this.name = name;
-        this.lastName = lastName;
-        this.age = age;
-      }
+<body>
+  <div>
+    <input id="personInputName" placeholder="Name" type="text" />
+    <input id="personInputLastName" placeholder="LastName" type="text" />
+    <input id="personInputAge" placeholder="Age" type="text" />
+    <button id="buttonAddPerson" onclick="addPerson()">Add Person</button>
+    <!-- <button onclick="confirmState()">ConfirmEdit</button> -->
+  </div>
+  <br />
+  <div>
+    <button onclick="mapear()">MAPEAR</button>
+  </div>
+  <div>
+    <p>Lista Personas</p>
+    <ul id="list"></ul>
+  </div>
+</body>
 
-      getPersonData = () => {
-        return `Name: ${this.name}, LastName: ${this.lastName}, Age: ${this.age}`;
-      };
+<script>
+  class Person {
+    constructor(id, name, lastName, age) {
+      this.id = id;
+      this.name = name;
+      this.lastName = lastName;
+      this.age = age;
     }
 
-    const data = [];
-
-    const enumColors = {
-      BLACK: "black",
-      GREEN: "green",
-      BLUE: "blue",
-      RED: "red",
+    getPersonData = () => {
+      return `Name: ${this.name}, LastName: ${this.lastName}, Age: ${this.age}`;
     };
+  }
 
-    let maxId = 0;
-    const list = document.querySelector("#list");
-    const inputName = document.querySelector("#personInputName");
-    const inputLastName = document.querySelector("#personInputLastName");
-    const inputAge = document.querySelector("#personInputAge");
+  let maxId = 0;
+  const data = [];
+  const enumColors = {
+    BLACK: "black",
+    GREEN: "green",
+    BLUE: "blue",
+    RED: "red",
+  };
 
-    const addPerson = () => {
-      const name = inputName.value;
-      const lastName = inputLastName.value;
-      const age = inputAge.value;
-      const person = new Person(++maxId, name, lastName, age);
+  const list = document.querySelector("#list");
+  const inputName = document.querySelector("#personInputName");
+  const inputLastName = document.querySelector("#personInputLastName");
+  const inputAge = document.querySelector("#personInputAge");
+  const buttonActive = document.querySelector('#buttonAddPerson')
+
+  const addPerson = (id) => {
+    let idPerson = id ? id : ++maxId
+
+    if (inputName.value.trim() === "" && inputLastName.value.trim() === "" && inputAge.value.trim() === "") {
+      alert("alguno de los campos estan vacios")
+    } else {
+
+      const person = new Person(idPerson, inputName.value, inputLastName.value, inputAge.value);
+      data.push(person);
 
       const text = document.createElement("p");
       const item = document.createElement("li");
 
-      /* const newTask = {
-        id: ++maxId,
-        name: "content",
-        status: false,
-      }; */
-
-      data.push(person);
       const dataPerson = person.getPersonData();
-
       const editButton = document.createElement("button");
-      editButton.textContent = "EDIT";
-      editButton.setAttribute("id", `button-${person.id}`);
-      editButton.setAttribute("onclick", `handleEditPerson(${person.id})`);
-      editButton.style.color = enumColors.BLACK;
-      editButton.style.background = enumColors.GREEN;
+      const deleteButton = document.createElement("button");
+
+      buttonsPersons(person.id, editButton, deleteButton)
 
       text.appendChild(document.createTextNode(`${dataPerson}`));
       item.appendChild(text);
       item.appendChild(editButton);
+      item.appendChild(deleteButton);
       item.setAttribute("id", `${person.id}`);
       list.appendChild(item);
 
       inputName.value = "";
       inputLastName.value = "";
       inputAge.value = "";
-    };
 
-    const mapear = () => {
-      console.log(data.map((e) => e));
-    };
+    }
 
-    /* const deleteTask = () => {
-        let list = document.getElementById('list');
-        let selectItem = document.getElementById("deleteTaskInput");
+  };
 
-        if (selectItem.value) {
-            let option = confirm("Posta queres eliminarme?")
-            if (option === true) {
-                const itemId = parseInt(selectItem.value)
-                const element = data.find(item => itemId === item.id)
-                let index = data.indexOf(element)
+  const mapear = () => {
+    console.log(data.map((e) => e));
+  };
 
-                data.splice(index, 1)
+  const handleDeletePerson = (id) => {
+    let list = document.getElementById('list');
+    let item = document.getElementById(`${id}`);
 
-                let item = document.getElementById(selectItem.value);
-                list.removeChild(item);
-                alert("Task deleted successfully")
-            } else { alert("Task not deleted") }
-        } else { alert('Coloque un numerito mijo, usted puede') }
+    const element = data.find(item => id === item.id)
+    let index = data.indexOf(element)
 
-    } */
+    data.splice(index, 1)
+    list.removeChild(item);
+  }
 
-    const handleEditPerson = (id) => {
-      const itemId = id.toString();
-/*       const search = data.find((element) => element.id === id);
- */      const element = data.find((item) => id === item.id);
+  const handleEditPerson = async (id) => {
 
-      
-      const name = inputName;
-      const lastName = inputLastName;
-      const age = inputAge;
-      
-      let item = document.getElementById(id);
-    
-        name.value=element.name
-        lastName.value=element.lastName
-        age.value=element.age
+    const element = data.find((item) => id === item.id);
+    let item = document.getElementById(id);
 
-      console.log(element);
-      
-      if (element.status === false) {
-        element.status = true;
-        item.style["text-decoration"] = "line-through";
-        item.style["color"] = enumColors.RED;
-      } else {
-        element.status = false;
-        item.style["text-decoration"] = "none";
-        item.style["color"] = enumColors.BLACK;
-      }
-    };
-  </script>
+    inputName.value = element.name
+    inputLastName.value = element.lastName
+    inputAge.value = element.age
+
+    document.getElementById("buttonAddPerson").disabled = true;
+
+    const confirmButton = document.createElement("button");
+
+    confirmButton.textContent = "CONFIRM";
+    confirmButton.setAttribute("id", `button-${id}`);
+    confirmButton.setAttribute("onclick", `handleConfirmEdit(${id})`);
+    confirmButton.style.color = enumColors.BLACK;
+    confirmButton.style.background = enumColors.BLUE;
+
+    item.appendChild(confirmButton)
+
+  };
+  const handleConfirmEdit = (id) => {
+    document.getElementById("buttonAddPerson").disabled = false;
+    handleDeletePerson(id)
+    addPerson(id)
+  }
+
+  const buttonsPersons = (id, editButton, deleteButton) => {
+    editButton.textContent = "EDIT";
+    editButton.setAttribute("id", `button-${id}`);
+    editButton.setAttribute("onclick", `handleEditPerson(${id})`);
+    editButton.style.color = enumColors.BLACK;
+    editButton.style.background = enumColors.GREEN;
+    deleteButton.textContent = "DELETE";
+    deleteButton.setAttribute("id", `button-${id}`);
+    deleteButton.setAttribute("onclick", `handleDeletePerson(${id})`);
+    deleteButton.style.color = enumColors.BLACK;
+    deleteButton.style.background = enumColors.RED;
+  }
+
+</script>
+
 </html>
